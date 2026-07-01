@@ -1,0 +1,17 @@
+# robots.txt for Beautyx by Farina
+# Allow all crawlers for maximum SEO visibility
+User-agent: *
+Allow: /
+
+# Allow AI/LLM crawlers for GEO (Generative Engine Optimization)
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+# Sitemap
+Sitemap: https://beautyxbyfarina.com/sitemap.xml

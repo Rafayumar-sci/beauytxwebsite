@@ -1,0 +1,17 @@
+{
+  "name": "Beautyx by Farina",
+  "short_name": "Beautyx",
+  "description": "Premium Beauty Salon in Lahore — Makeup, Skincare, Hair, Nails, Laser & Waxing",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FDF8F5",
+  "theme_color": "#4A1A2C",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
