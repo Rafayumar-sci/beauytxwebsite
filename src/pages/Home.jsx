@@ -7,6 +7,8 @@ import {
   breadcrumbSchema,
   reviewSchema,
 } from "../utils/seo";
+import HeroParticles from "../components/HeroParticles";
+import AnimatedPage from "../components/AnimatedPage";
 
 export default function Home() {
   const featuredServices = serviceCategories.slice(0, 6);
@@ -41,9 +43,10 @@ export default function Home() {
         </script>
       </Helmet>
 
-      <div className="page-transition">
+      <AnimatedPage>
         {/* Hero Section */}
         <header className="hero-section" aria-label="Hero banner">
+          <HeroParticles />
           <div className="container">
             <div className="hero-content">
               <div className="hero-text">
@@ -297,7 +300,7 @@ export default function Home() {
             </div>
           </div>
         </section>
-      </div>
+      </AnimatedPage>
     </>
   );
 }

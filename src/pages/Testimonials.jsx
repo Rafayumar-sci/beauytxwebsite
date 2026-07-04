@@ -3,6 +3,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { testimonials } from "../data/testimonials";
 import { pageMeta, breadcrumbSchema, reviewSchema } from "../utils/seo";
+import HeroParticles from "../components/HeroParticles";
+import AnimatedPage from "../components/AnimatedPage";
 
 export default function TestimonialsPage() {
   const [ratingFilter, setRatingFilter] = useState(0);
@@ -48,9 +50,10 @@ export default function TestimonialsPage() {
         </script>
       </Helmet>
 
-      <div className="page-transition">
+      <AnimatedPage>
         {/* Page Hero */}
         <header className="page-hero" aria-label="Testimonials page header">
+          <HeroParticles />
           <div className="container">
             <h1 className="page-hero-title">Client Testimonials</h1>
             <p className="page-hero-subtitle">
@@ -240,6 +243,27 @@ export default function TestimonialsPage() {
           </div>
         </section>
 
+        {/* Google Reviews Link */}
+        <section style={{ padding: "60px 0", background: "var(--white)", textAlign: "center" }} aria-label="Leave a review">
+          <div className="container">
+            <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "1.8rem", color: "var(--secondary)", marginBottom: "12px" }}>
+              Love Our Services?
+            </h2>
+            <p style={{ color: "var(--text-muted)", marginBottom: "24px", fontSize: "1rem" }}>
+              We would love to hear from you! Leave us a review on Google and help others discover Beautyx by Farina.
+            </p>
+            <a
+              href="https://g.page/r/CZbd4O_DGKQJEAE/review"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-primary"
+              aria-label="Leave a review on Google"
+            >
+              Write a Review on Google
+            </a>
+          </div>
+        </section>
+
         {/* CTA */}
         <section className="cta-section" aria-label="Book an appointment">
           <div className="container">
@@ -252,7 +276,7 @@ export default function TestimonialsPage() {
             </Link>
           </div>
         </section>
-      </div>
+      </AnimatedPage>
     </>
   );
 }

@@ -1,28 +1,28 @@
 import { Helmet } from "react-helmet-async";
 import { useParams, Link } from "react-router-dom";
-import { serviceCategories } from "../data/services";
+import { serviceCategories, findGroupInCategory } from "../data/services";
 import { pageMeta, breadcrumbSchema, serviceSchema } from "../utils/seo";
 import {
   toSlug,
   categoryGradients,
   CategorySvgIcon,
 } from "../utils/icons.jsx";
-import { getCategoryServices } from "../data/services";
 import HeroParticles from "../components/HeroParticles";
 import AnimatedPage from "../components/AnimatedPage";
 
-export default function ServiceCategory() {
-  const { categoryId } = useParams();
+export default function ServiceGroup() {
+  const { categoryId, groupSlug } = useParams();
   const category = serviceCategories.find((c) => c.id === categoryId);
+  const group = category ? findGroupInCategory(category, groupSlug) : null;
 
-  if (!category) {
+  if (!category || !group) {
     return (
       <AnimatedPage>
         <div className="page-hero">
           <div className="container">
-            <h1 className="page-hero-title">Service Not Found</h1>
+            <h1 className="page-hero-title">Service Group Not Found</h1>
             <p className="page-hero-subtitle">
-              The service category you are looking for could not be found.
+              The service group you are looking for could not be found.
             </p>
             <Link
               to="/services"
@@ -37,10 +37,12 @@ export default function ServiceCategory() {
     );
   }
 
-  const allCatServices = getCategoryServices(category);
+  const iconKey = category.icon;
+  const gradient = categoryGradients[iconKey] || "linear-gradient(135deg, var(--primary-soft), var(--accent-light))";
+
   const meta = pageMeta(
-    `${category.name} Services in Lahore -- Beautyx by Farina`,
-    `${category.description} Book online for ${category.name.toLowerCase()} at our Lahore salon.`,
+    `${group.name} Services in Lahore -- Beautyx by Farina`,
+    `${group.description} Book online for ${group.name.toLowerCase()} at our ${category.name.toLowerCase()} salon in Lahore.`,
     category.seoKeywords?.join(", ")
   );
 
@@ -48,15 +50,13 @@ export default function ServiceCategory() {
     { name: "Home", path: "/" },
     { name: "Services", path: "/services" },
     { name: category.name, path: `/services/${category.id}` },
+    { name: group.name, path: `/services/${category.id}/g/${groupSlug}` },
   ]);
 
   const serviceStructured = serviceSchema({
     ...category,
-    services: allCatServices,
+    services: group.services,
   });
-
-  const iconKey = category.icon;
-  const gradient = categoryGradients[iconKey] || "linear-gradient(135deg, var(--primary-soft), var(--accent-light))";
 
   return (
     <>
@@ -68,13 +68,13 @@ export default function ServiceCategory() {
         <meta property="og:description" content={meta.ogDescription} />
         <meta
           property="og:url"
-          content={`https://beautyxbyfarina.com/services/${category.id}`}
+          content={`https://beautyxbyfarina.com/services/${category.id}/g/${groupSlug}`}
         />
         <meta name="twitter:title" content={meta.ogTitle} />
         <meta name="twitter:description" content={meta.ogDescription} />
         <link
           rel="canonical"
-          href={`https://beautyxbyfarina.com/services/${category.id}`}
+          href={`https://beautyxbyfarina.com/services/${category.id}/g/${groupSlug}`}
         />
         <script type="application/ld+json">
           {JSON.stringify(breadcrumb)}
@@ -88,33 +88,48 @@ export default function ServiceCategory() {
         {/* Page Hero */}
         <header
           className="page-hero"
-          aria-label={`${category.name} services header`}
+          aria-label={`${group.name} services header`}
         >
           <HeroParticles />
           <div className="container">
-            <h1 className="page-hero-title">
-              {category.name} Services in Lahore
-            </h1>
-            <p className="page-hero-subtitle">{category.description}</p>
+            <Link
+              to={`/services/${category.id}`}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                fontSize: "0.85rem",
+                color: "var(--primary)",
+                fontWeight: 500,
+                marginBottom: "12px",
+                textDecoration: "none",
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+              </svg>
+              Back to {category.name}
+            </Link>
+            <h1 className="page-hero-title">{group.name} Services</h1>
+            <p className="page-hero-subtitle">{group.description}</p>
           </div>
         </header>
 
         {/* Individual Service Cards */}
-        <section className="about-page-section" aria-labelledby="services-heading">
+        <section className="about-page-section" aria-labelledby="group-services-heading">
           <div className="container">
             <div className="section-header">
-              <span className="section-tag">{category.name}</span>
-              <h2 id="services-heading" className="section-title">
-                Our {category.name} Services
+              <span className="section-tag">{group.name}</span>
+              <h2 id="group-services-heading" className="section-title">
+                Our {group.name} Services
               </h2>
               <p className="section-subtitle">
-                {allCatServices.length} professional{" "}
-                {category.name.toLowerCase()} services tailored to your needs
+                {group.services.length} professional {group.name.toLowerCase()} services
               </p>
             </div>
 
-            <div className="service-cards-grid" role="list" aria-label={`${category.name} services`}>
-              {allCatServices.map((service, i) => {
+            <div className="service-cards-grid" role="list" aria-label={`${group.name} services`}>
+              {group.services.map((service, i) => {
                 const slug = toSlug(service.name);
                 return (
                   <Link
@@ -169,16 +184,16 @@ export default function ServiceCategory() {
         <section className="cta-section" aria-label="Book your appointment">
           <div className="container">
             <h2 className="cta-title">
-              Book Your {category.name} Appointment
+              Book Your {group.name} Appointment
             </h2>
             <p className="cta-subtitle">
-              Experience professional {category.name.toLowerCase()} services at
+              Experience professional {group.name.toLowerCase()} services at
               Beautyx by Farina in Lahore. Schedule your visit today.
             </p>
             <Link
               to="/book-appointment"
               className="btn btn-accent"
-              aria-label={`Book ${category.name.toLowerCase()} appointment`}
+              aria-label={`Book ${group.name} appointment`}
             >
               Book Now
             </Link>

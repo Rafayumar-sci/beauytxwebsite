@@ -1,6 +1,8 @@
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { pageMeta, breadcrumbSchema } from "../utils/seo";
+import HeroParticles from "../components/HeroParticles";
+import AnimatedPage from "../components/AnimatedPage";
 
 export default function About() {
   const meta = pageMeta(
@@ -31,9 +33,10 @@ export default function About() {
         </script>
       </Helmet>
 
-      <div className="page-transition">
+      <AnimatedPage>
         {/* Page Hero */}
         <header className="page-hero" aria-label="About page header">
+          <HeroParticles />
           <div className="container">
             <h1 className="page-hero-title">About Beautyx by Farina</h1>
             <p className="page-hero-subtitle">
@@ -228,7 +231,7 @@ export default function About() {
             </Link>
           </div>
         </section>
-      </div>
+      </AnimatedPage>
     </>
   );
 }

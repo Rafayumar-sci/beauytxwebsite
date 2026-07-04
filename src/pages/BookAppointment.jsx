@@ -2,6 +2,8 @@ import { Helmet } from "react-helmet-async";
 import { useState } from "react";
 import { serviceCategories } from "../data/services";
 import { pageMeta, breadcrumbSchema } from "../utils/seo";
+import HeroParticles from "../components/HeroParticles";
+import AnimatedPage from "../components/AnimatedPage";
 
 export default function BookAppointment() {
   const [submitted, setSubmitted] = useState(false);
@@ -81,9 +83,10 @@ export default function BookAppointment() {
         </script>
       </Helmet>
 
-      <div className="page-transition">
+      <AnimatedPage>
         {/* Page Hero */}
         <header className="page-hero" aria-label="Book appointment page header">
+          <HeroParticles />
           <div className="container">
             <h1 className="page-hero-title">Book an Appointment</h1>
             <p className="page-hero-subtitle">
@@ -94,7 +97,8 @@ export default function BookAppointment() {
         </header>
 
         {/* Booking Section */}
-        <section className="booking-section" aria-label="Appointment booking form">
+        <section className="booking-section" aria-label="Appointment booking form" style={{ position: 'relative' }}>
+          <HeroParticles />
           <div className="container">
             <div className="booking-content">
               <div className="booking-info">
@@ -115,7 +119,7 @@ export default function BookAppointment() {
                     </div>
                     <div>
                       <h4>Location</h4>
-                      <span>Main Boulevard, Lahore, Pakistan</span>
+                      <span>122 A/4 P.G.E.C.H.S, Phase-1, Lahore, Pakistan</span>
                     </div>
                   </div>
                   <div className="booking-detail">
@@ -142,7 +146,7 @@ export default function BookAppointment() {
                     </div>
                     <div>
                       <h4>Working Hours</h4>
-                      <span>Monday - Saturday: 10:00 AM - 8:00 PM</span>
+                      <span>Monday - Sunday: 10:00 AM - 8:00 PM</span>
                     </div>
                   </div>
                   <div className="booking-detail">
@@ -290,19 +294,25 @@ export default function BookAppointment() {
                           >
                             <option value="">Select a service</option>
                             {formData.category
-                              ? serviceCategories
-                                  .find((c) => c.id === formData.category)
-                                  ?.services.map((s, i) => (
-                                    <option key={i} value={s.name}>
-                                      {s.name}
-                                    </option>
-                                  ))
-                              : serviceCategories.map((cat) =>
-                                  cat.services.map((s, i) => (
-                                    <option key={`${cat.id}-${i}`} value={s.name}>
-                                      {s.name} ({cat.name})
-                                    </option>
-                                  ))
+                              ? (() => {
+                                  const cat = serviceCategories.find((c) => c.id === formData.category);
+                                  if (!cat) return null;
+                                  return cat.groups.flatMap((g) =>
+                                    g.services.map((s, i) => (
+                                      <option key={`${g.name}-${i}`} value={s.name}>
+                                        {s.name} ({g.name})
+                                      </option>
+                                    ))
+                                  );
+                                })()
+                              : serviceCategories.flatMap((cat) =>
+                                  cat.groups.flatMap((g) =>
+                                    g.services.map((s, i) => (
+                                      <option key={`${cat.id}-${g.name}-${i}`} value={s.name}>
+                                        {s.name} ({cat.name})
+                                      </option>
+                                    ))
+                                  )
                                 )}
                           </select>
                         </div>
@@ -371,7 +381,7 @@ export default function BookAppointment() {
             </div>
           </div>
         </section>
-      </div>
+      </AnimatedPage>
     </>
   );
 }

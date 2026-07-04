@@ -2,43 +2,34 @@ import { Helmet } from "react-helmet-async";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { pageMeta, breadcrumbSchema } from "../utils/seo";
+import HeroParticles from "../components/HeroParticles";
+import AnimatedPage from "../components/AnimatedPage";
 
 const galleryImages = [
-  { id: 1, category: "makeup", label: "Bridal Makeup" },
-  { id: 2, category: "makeup", label: "Party Makeup" },
-  { id: 3, category: "makeup", label: "Signature Look" },
-  { id: 4, category: "hair", label: "Keratin Treatment" },
-  { id: 5, category: "hair", label: "Hair Coloring" },
-  { id: 6, category: "hair", label: "Hair Styling" },
+  { id: 1, label: "Bridal Makeup" },
+  { id: 2, label: "Party Makeup" },
+  { id: 3, label: "Signature Look" },
+  { id: 4, label: "Keratin Treatment" },
+  { id: 5, label: "Hair Coloring" },
+  { id: 6, label: "Hair Styling" },
+  { id: 7, label: "Manicure & Pedicure" },
+  { id: 8, label: "Nail Art" },
+  { id: 9, label: "Facial Glow" },
+  { id: 10, label: "Laser Treatment" },
+  { id: 11, label: "Bridal Collection" },
+  { id: 12, label: "Salón Moments" },
 ];
 
-const categories = [
-  { id: "all", label: "All" },
-  { id: "makeup", label: "Makeup" },
-  { id: "hair", label: "Hair" },
-];
-
-const categoryIcons = {
-  makeup: (
-    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#B76E79" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
-    </svg>
-  ),
-  hair: (
-    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#B76E79" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/><path d="M13 13l6 6"/>
-    </svg>
-  ),
-};
+const defaultIcon = (
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#B76E79" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+    <circle cx="8.5" cy="8.5" r="1.5"/>
+    <polyline points="21 15 16 10 5 21"/>
+  </svg>
+);
 
 export default function Gallery() {
-  const [activeCategory, setActiveCategory] = useState("all");
   const [selectedImage, setSelectedImage] = useState(null);
-
-  const filtered =
-    activeCategory === "all"
-      ? galleryImages
-      : galleryImages.filter((img) => img.category === activeCategory);
 
   const meta = pageMeta(
     "Gallery -- Makeup and Hair Transformations | Beautyx by Farina",
@@ -50,16 +41,6 @@ export default function Gallery() {
     { name: "Home", path: "/" },
     { name: "Gallery", path: "/gallery" },
   ]);
-
-  const defaultIcon = (
-    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#B76E79" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-      <circle cx="8.5" cy="8.5" r="1.5"/>
-      <polyline points="21 15 16 10 5 21"/>
-    </svg>
-  );
-
-  const getIcon = (img) => categoryIcons[img.category] || defaultIcon;
 
   return (
     <>
@@ -78,9 +59,10 @@ export default function Gallery() {
         </script>
       </Helmet>
 
-      <div className="page-transition">
+      <AnimatedPage>
         {/* Page Hero */}
         <header className="page-hero" aria-label="Gallery page header">
+          <HeroParticles />
           <div className="container">
             <h1 className="page-hero-title">Our Gallery</h1>
             <p className="page-hero-subtitle">
@@ -93,24 +75,8 @@ export default function Gallery() {
         {/* Gallery */}
         <section className="about-page-section" aria-labelledby="gallery-heading">
           <div className="container">
-            <nav className="gallery-categories" aria-label="Filter gallery by category">
-              {categories.map((cat) => (
-                <button
-                  key={cat.id}
-                  className={`gallery-cat-btn${
-                    activeCategory === cat.id ? " active" : ""
-                  }`}
-                  onClick={() => setActiveCategory(cat.id)}
-                  aria-current={activeCategory === cat.id ? "true" : undefined}
-                  aria-label={`Show ${cat.label} photos`}
-                >
-                  {cat.label}
-                </button>
-              ))}
-            </nav>
-
             <div className="gallery-grid" role="list" aria-label="Salon work gallery">
-              {filtered.map((img) => (
+              {galleryImages.map((img) => (
                 <div
                   key={img.id}
                   className="gallery-item"
@@ -121,7 +87,7 @@ export default function Gallery() {
                   onKeyDown={(e) => e.key === "Enter" && setSelectedImage(img)}
                 >
                   <div className="gallery-item-placeholder" aria-hidden="true">
-                    <div style={{ marginBottom: "8px" }}>{getIcon(img)}</div>
+                    <div style={{ marginBottom: "8px" }}>{defaultIcon}</div>
                     <span className="gallery-item-label">{img.label}</span>
                   </div>
                   <div className="gallery-item-overlay">
@@ -130,19 +96,6 @@ export default function Gallery() {
                 </div>
               ))}
             </div>
-
-            {filtered.length === 0 && (
-              <div
-                style={{
-                  textAlign: "center",
-                  padding: "60px 0",
-                  color: "var(--text-muted)",
-                }}
-                role="status"
-              >
-                <p>No images in this category yet. Check back soon!</p>
-              </div>
-            )}
           </div>
         </section>
 
@@ -223,7 +176,7 @@ export default function Gallery() {
             </Link>
           </div>
         </section>
-      </div>
+      </AnimatedPage>
     </>
   );
 }

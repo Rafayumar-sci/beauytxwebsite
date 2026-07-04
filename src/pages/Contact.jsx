@@ -1,6 +1,8 @@
 import { Helmet } from "react-helmet-async";
 import { useState } from "react";
 import { pageMeta, breadcrumbSchema } from "../utils/seo";
+import HeroParticles from "../components/HeroParticles";
+import AnimatedPage from "../components/AnimatedPage";
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
@@ -24,7 +26,7 @@ export default function Contact() {
 
   const meta = pageMeta(
     "Contact Us -- Beautyx by Farina | Beauty Salon Lahore",
-    "Contact Beautyx by Farina in Lahore. Call +92 347 4138970, email info@beautyxbyfarina.com, or visit us at Main Boulevard. Book bridal makeup, facials, hair treatments, nails, laser, and waxing.",
+    "Contact Beautyx by Farina in Lahore. Call +92 347 4138970, email beautyxsalon1417@gmail.com, or visit us at 122 A/4 P.G.E.C.H.S, Phase-1, Lahore. Book bridal makeup, facials, hair treatments, nails, laser, and waxing.",
     "contact beauty salon Lahore, Beautyx by Farina Lahore address, beauty salon phone number Lahore, book beauty appointment Lahore"
   );
 
@@ -50,9 +52,10 @@ export default function Contact() {
         </script>
       </Helmet>
 
-      <div className="page-transition">
+      <AnimatedPage>
         {/* Page Hero */}
         <header className="page-hero" aria-label="Contact page header">
+          <HeroParticles />
           <div className="container">
             <h1 className="page-hero-title">Contact Us</h1>
             <p className="page-hero-subtitle">
@@ -63,7 +66,8 @@ export default function Contact() {
         </header>
 
         {/* Contact Section */}
-        <section className="contact-section" aria-label="Contact information and form">
+        <section className="contact-section" aria-label="Contact information and form" style={{ position: 'relative' }}>
+          <HeroParticles />
           <div className="container">
             <div className="contact-content">
               <div className="contact-info-grid" aria-label="Our contact details">
@@ -76,8 +80,8 @@ export default function Contact() {
                   </div>
                   <h3>Visit Us</h3>
                   <p>
-                    Main Boulevard, Lahore<br />
-                    Punjab, Pakistan
+                    122 A/4 P.G.E.C.H.S<br />
+                    Phase-1, Lahore, Punjab, Pakistan
                   </p>
                 </address>
 
@@ -104,12 +108,8 @@ export default function Contact() {
                   </div>
                   <h3>Email Us</h3>
                   <p>
-                    <a href="mailto:info@beautyxbyfarina.com" aria-label="Email info at beautyxbyfarina.com">
-                      info@beautyxbyfarina.com
-                    </a>
-                    <br />
-                    <a href="mailto:booking@beautyxbyfarina.com" aria-label="Email booking at beautyxbyfarina.com">
-                      booking@beautyxbyfarina.com
+                    <a href="mailto:beautyxsalon1417@gmail.com" aria-label="Email beautyxsalon1417@gmail.com">
+                      beautyxsalon1417@gmail.com
                     </a>
                   </p>
                 </div>
@@ -123,9 +123,7 @@ export default function Contact() {
                   </div>
                   <h3>Working Hours</h3>
                   <p>
-                    Monday -- Saturday: 10:00 AM - 8:00 PM
-                    <br />
-                    Sunday: Closed
+                    Monday -- Sunday: 10:00 AM - 8:00 PM
                   </p>
                 </div>
 
@@ -246,25 +244,25 @@ export default function Contact() {
               </div>
             </div>
 
-            {/* Map Placeholder */}
+            {/* Google Map */}
             <div
               className="contact-map"
-              role="img"
-              aria-label="Our location at Main Boulevard, Lahore, Pakistan"
+              aria-label="Our location at 122 A/4 P.G.E.C.H.S, Phase-1, Lahore, Pakistan"
             >
-              <div style={{ textAlign: "center" }}>
-                <div style={{ marginBottom: "8px" }} aria-hidden="true">
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#B76E79" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                    <circle cx="12" cy="10" r="3"/>
-                  </svg>
-                </div>
-                <div>Main Boulevard, Lahore, Pakistan</div>
-              </div>
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3403.8364824145733!2d74.285444!3d31.446168300000004!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39190137ffbc2e01%3A0x9a418c3efe0dd96!2sBeautyx%20By%20Farina!5e0!3m2!1sen!2s!4v1783078058836!5m2!1sen!2s"
+                width="100%"
+                height="350"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="strict-origin-when-cross-origin"
+                title="Beautyx by Farina location on Google Maps"
+              />
             </div>
           </div>
         </section>
-      </div>
+      </AnimatedPage>
     </>
   );
 }

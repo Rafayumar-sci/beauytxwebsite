@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { useParams, Link } from "react-router-dom";
-import { serviceCategories } from "../data/services";
+import { serviceCategories, findServiceInCategory, getCategoryServices } from "../data/services";
 import { pageMeta, breadcrumbSchema } from "../utils/seo";
 import {
   toSlug,
@@ -8,16 +8,18 @@ import {
   CategorySvgIcon,
   generateServiceLongDescription,
 } from "../utils/icons.jsx";
+import HeroParticles from "../components/HeroParticles";
+import AnimatedPage from "../components/AnimatedPage";
 
 export default function ServiceDetail() {
   const { categoryId, serviceSlug } = useParams();
 
   const category = serviceCategories.find((c) => c.id === categoryId);
-  const service = category?.services.find((s) => toSlug(s.name) === serviceSlug);
+  const { service, group } = category ? findServiceInCategory(category, serviceSlug) : { service: null, group: null };
 
   if (!category || !service) {
     return (
-      <div className="page-transition">
+      <AnimatedPage>
         <div className="page-hero">
           <div className="container">
             <h1 className="page-hero-title">Service Not Found</h1>
@@ -33,13 +35,16 @@ export default function ServiceDetail() {
             </Link>
           </div>
         </div>
-      </div>
+      </AnimatedPage>
     );
   }
 
   const gradient = categoryGradients[category.icon] || "linear-gradient(135deg, var(--primary-soft), var(--accent-light))";
   const longDescription = generateServiceLongDescription(service, category);
-  const relatedServices = category.services.filter((s) => s.name !== service.name).slice(0, 3);
+
+  // Get all services from the same category, excluding current
+  const allCatServices = getCategoryServices(category);
+  const relatedServices = allCatServices.filter((s) => s.name !== service.name).slice(0, 3);
 
   const meta = pageMeta(
     `${service.name} in Lahore -- Beautyx by Farina`,
@@ -77,25 +82,16 @@ export default function ServiceDetail() {
         </script>
       </Helmet>
 
-      <div className="page-transition">
+      <AnimatedPage>
         {/* Hero Section with Image */}
         <header
           className="page-hero"
           aria-label={`${service.name} service header`}
           style={{ paddingBottom: "40px" }}
         >
+          <HeroParticles />
           <div className="container">
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: "60px",
-                alignItems: "center",
-                textAlign: "left",
-                position: "relative",
-                zIndex: 1,
-              }}
-            >
+            <div className="service-detail-hero">
               <div>
                 <Link
                   to={`/services/${category.id}`}
@@ -115,6 +111,20 @@ export default function ServiceDetail() {
                   </svg>
                   Back to {category.name} Services
                 </Link>
+                {group && (
+                  <div
+                    style={{
+                      fontSize: "0.8rem",
+                      color: "var(--primary)",
+                      fontWeight: 500,
+                      textTransform: "uppercase",
+                      letterSpacing: "1px",
+                      marginBottom: "8px",
+                    }}
+                  >
+                    {group.name}
+                  </div>
+                )}
                 <h1 className="page-hero-title" style={{ fontSize: "2.8rem" }}>
                   {service.name} in Lahore
                 </h1>
@@ -231,7 +241,7 @@ export default function ServiceDetail() {
                       Service Category
                     </h4>
                     <p style={{ fontSize: "0.9rem", color: "var(--text-muted)" }}>
-                      {category.name}
+                      {category.name}{group ? ` — ${group.name}` : ""}
                     </p>
                   </div>
                   <div>
@@ -246,7 +256,7 @@ export default function ServiceDetail() {
                       Location
                     </h4>
                     <p style={{ fontSize: "0.9rem", color: "var(--text-muted)" }}>
-                      Main Boulevard, Lahore, Pakistan
+                      122 A/4 P.G.E.C.H.S, Phase-1, Lahore, Pakistan
                     </p>
                   </div>
                   <div>
@@ -276,7 +286,7 @@ export default function ServiceDetail() {
                       Timings
                     </h4>
                     <p style={{ fontSize: "0.9rem", color: "var(--text-muted)" }}>
-                      Mon-Sat: 10:00 AM - 8:00 PM
+                      Mon-Sun: 10:00 AM - 8:00 PM
                     </p>
                   </div>
                 </div>
@@ -343,7 +353,7 @@ export default function ServiceDetail() {
             </Link>
           </div>
         </section>
-      </div>
+      </AnimatedPage>
     </>
   );
 }

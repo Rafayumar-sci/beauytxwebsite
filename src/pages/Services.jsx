@@ -3,7 +3,10 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { serviceCategories } from "../data/services";
 import { pageMeta, breadcrumbSchema, serviceSchema, faqSchema } from "../utils/seo";
-import { toSlug } from "../utils/icons.jsx";
+import { toSlug, CategorySvgIcon } from "../utils/icons.jsx";
+import { getCategoryServices } from "../data/services";
+import HeroParticles from "../components/HeroParticles";
+import AnimatedPage from "../components/AnimatedPage";
 
 export default function Services() {
   const [activeCategory, setActiveCategory] = useState(serviceCategories[0].id);
@@ -29,7 +32,6 @@ export default function Services() {
     { name: "Services", path: "/services" },
   ]);
 
-  // FAQ data specific to services page
   const serviceFAQs = faqSchema([
     {
       question: "What makeup services do you offer in Lahore?",
@@ -49,9 +51,27 @@ export default function Services() {
     },
     {
       question: "Is laser hair removal available in Lahore?",
-      answer: "Yes, Beautyx by Farina offers professional laser hair removal for face, arms, legs, underarms, bikini line, and full body. Safe, effective, permanent hair reduction.",
+      answer: "Yes, Beautyx by Farina offers professional laser hair removal for face, arms, legs, underarms, and full body. Safe, effective, permanent hair reduction.",
     },
   ]);
+
+  const categoryIcons = {
+    makeup: "makeup",
+    "skin-treatments": "skincare",
+    "hair-treatments": "hair",
+    "nail-salon": "nails",
+    "laser-hair-removal": "laser",
+    waxing: "waxing",
+  };
+
+  const placeholderColors = {
+    makeup: "B76E79",
+    skincare: "6B8E6B",
+    hair: "9A5A65",
+    nails: "C9A96E",
+    laser: "7B8CB5",
+    waxing: "C4876E",
+  };
 
   return (
     <>
@@ -70,7 +90,7 @@ export default function Services() {
         </script>
         {serviceCategories.map((cat) => (
           <script key={cat.id} type="application/ld+json">
-            {JSON.stringify(serviceSchema(cat))}
+            {JSON.stringify(serviceSchema({ ...cat, services: getCategoryServices(cat) }))}
           </script>
         ))}
         <script type="application/ld+json">
@@ -78,9 +98,10 @@ export default function Services() {
         </script>
       </Helmet>
 
-      <div className="page-transition">
+      <AnimatedPage>
         {/* Page Hero */}
         <header className="page-hero" aria-label="Services page header">
+          <HeroParticles />
           <div className="container">
             <h1 className="page-hero-title">Our Beauty Services</h1>
             <p className="page-hero-subtitle">
@@ -105,60 +126,79 @@ export default function Services() {
           ))}
         </nav>
 
-        {/* Service Categories */}
-        {serviceCategories.map((category, index) => (
-          <section
-            key={category.id}
-            id={`category-${category.id}`}
-            className={`services-category-section category-anchor ${
-              index % 2 === 1 ? "about-section" : ""
-            }`}
-            aria-labelledby={`cat-heading-${category.id}`}
-          >
-            <div className="container">
-              <header className="services-category-header">
-                <h2 id={`cat-heading-${category.id}`} className="services-category-name">
-                  {category.name} Services in Lahore
-                </h2>
-                <p className="services-category-desc">{category.description}</p>
-              </header>
+        {/* Category Sections with Groups */}
+        {serviceCategories.map((category, index) => {
+          const iconKey = categoryIcons[category.id] || "makeup";
 
-              <div className="services-list" role="list" aria-label={`${category.name} services list`}>
-                {category.services.map((service, i) => {
-                  const slug = toSlug(service.name);
-                  return (
-                    <Link
-                      key={i}
-                      to={`/services/${category.id}/${slug}`}
-                      className="service-item"
-                      role="listitem"
-                      style={{ textDecoration: "none", cursor: "pointer" }}
-                      aria-label={`View ${service.name} service details`}
-                    >
-                      <div className="service-item-dot" aria-hidden="true" />
-                      <div>
-                        <h3 className="service-item-name">{service.name}</h3>
-                        {service.description && (
-                          <p className="service-item-desc">{service.description}</p>
-                        )}
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
+          return (
+            <section
+              key={category.id}
+              id={`category-${category.id}`}
+              className={`services-category-section category-anchor ${index % 2 === 1 ? "about-section" : ""}`}
+              aria-labelledby={`cat-heading-${category.id}`}
+            >
+              <div className="container">
+                <header className="services-category-header">
+                  <div className="services-category-icon" aria-hidden="true">
+                    <CategorySvgIcon icon={iconKey} size={40} />
+                  </div>
+                  <h2 id={`cat-heading-${category.id}`} className="services-category-name">
+                    {category.name} Services in Lahore
+                  </h2>
+                  <p className="services-category-desc">{category.description}</p>
+                </header>
 
-              <div style={{ textAlign: "center", marginTop: "40px" }}>
-                <Link
-                  to={`/services/${category.id}`}
-                  className="btn btn-primary"
-                  aria-label={`View all ${category.name} services in detail`}
-                >
-                  View All {category.name} Services
-                </Link>
+                {/* Group cards — clickable cards that link to group pages */}
+                <div className="service-groups-grid">
+                  {category.groups.map((group, gi) => {
+                    const groupSlug = toSlug(group.name);
+                    return (
+                      <Link
+                        key={gi}
+                        to={`/services/${category.id}/g/${groupSlug}`}
+                        style={{ textDecoration: "none", display: "block" }}
+                        aria-label={`View ${group.name} services`}
+                      >
+                        <div className="service-group-card service-group-card-link">
+                          <div className="service-group-image">
+                            <img
+                              src={`https://placehold.co/600x200/${placeholderColors[iconKey] || "B76E79"}/ffffff?text=${encodeURIComponent(group.name)}`}
+                              alt={group.name}
+                              loading="lazy"
+                            />
+                            <div className="service-group-image-overlay">
+                              <CategorySvgIcon icon={iconKey} size={22} />
+                              <h3 className="service-group-title">{group.name}</h3>
+                            </div>
+                          </div>
+                          <div className="service-group-body">
+                            <p className="service-group-desc">{group.description}</p>
+                            <div className="service-group-cta">
+                              <span>View {group.services.length} Services</span>
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+
+                <div style={{ textAlign: "center", marginTop: "40px" }}>
+                  <Link
+                    to={`/services/${category.id}`}
+                    className="btn btn-primary"
+                    aria-label={`View all ${category.name} services in detail`}
+                  >
+                    View All {category.name} Services
+                  </Link>
+                </div>
               </div>
-            </div>
-          </section>
-        ))}
+            </section>
+          );
+        })}
 
         {/* CTA */}
         <section className="cta-section" aria-label="Book your service appointment">
@@ -173,7 +213,7 @@ export default function Services() {
             </Link>
           </div>
         </section>
-      </div>
+      </AnimatedPage>
     </>
   );
 }

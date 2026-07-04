@@ -9,7 +9,7 @@ const BUSINESS_NAME = "Beautyx by Farina";
 const BUSINESS_DESC =
   "Lahore's premier beauty salon offering professional makeup, skin treatments, hair treatments, nail salon, laser hair removal, and waxing services.";
 const ADDRESS = {
-  streetAddress: "Main Boulevard",
+  streetAddress: "122 A/4 P.G.E.C.H.S, Phase-1",
   addressLocality: "Lahore",
   addressRegion: "Punjab",
   postalCode: "54000",
@@ -17,9 +17,9 @@ const ADDRESS = {
 };
 const GEO_COORDS = { latitude: 31.5204, longitude: 74.3587 };
 const TELEPHONE = "+92 347 4138970";
-const EMAIL = "info@beautyxbyfarina.com";
+const EMAIL = "beautyxsalon1417@gmail.com";
 const OPENING_HOURS = [
-  { dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], opens: "10:00", closes: "20:00" },
+  { dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"], opens: "10:00", closes: "20:00" },
 ];
 
 // ── Base entity reference ──
@@ -102,6 +102,10 @@ export function breadcrumbSchema(items) {
 
 // ── Service schema -- call for each category ──
 export function serviceSchema(category) {
+  // Flatten services from groups (new structure) or fall back to direct services (legacy)
+  const services = category.groups
+    ? category.groups.flatMap((g) => g.services)
+    : category.services || [];
   return {
     "@context": "https://schema.org",
     "@type": "Service",
@@ -109,7 +113,7 @@ export function serviceSchema(category) {
     description: category.description,
     provider: { "@id": businessId },
     areaServed: { "@type": "City", name: "Lahore" },
-    offers: category.services.map((s) => ({
+    offers: services.map((s) => ({
       "@type": "Offer",
       name: s.name,
       description: s.description,
@@ -201,6 +205,6 @@ export const beautyFAQs = [
   {
     question: "How can I book an appointment at Beautyx by Farina?",
     answer:
-      "You can book an appointment by calling +92 347 4138970, emailing info@beautyxbyfarina.com, or using our online booking form on the website. We are located on Main Boulevard, Lahore and open Monday-Saturday 10 AM-8 PM.",
+      "You can book an appointment by calling +92 347 4138970, emailing beautyxsalon1417@gmail.com, or using our online booking form on the website. We are located at 122 A/4 P.G.E.C.H.S, Phase-1, Lahore and open Monday-Sunday 10 AM-8 PM.",
   },
 ];
